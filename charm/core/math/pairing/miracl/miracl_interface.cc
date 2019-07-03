@@ -1169,7 +1169,7 @@ static const string base64_chars =
              "0123456789+/";
 
 
-/* Note that the following was borrowed from Copyright (C) 2004-2008 RenŽ Nyffenegger (*/
+/* Note that the following was borrowed from Copyright (C) 2004-2008 Renï¿½ Nyffenegger (*/
 
 static inline bool is_base64(unsigned char c) {
   return (isalnum(c) || (c == '+') || (c == '/'));

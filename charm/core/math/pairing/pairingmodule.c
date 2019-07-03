@@ -1103,12 +1103,12 @@ static PyObject *Element_set(Element *self, PyObject *args)
     Element *object;
     long int value;
     int errcode = TRUE;
+    debug("this is set Creating a new element\n");
 
 	if(self->elem_initialized == FALSE){
 		PyErr_SetString(PyExc_ValueError, "Must initialize element to a field (G1, G2, or GT).");
 		return NULL;
 	}
-
     debug("Creating a new element\n");
     if(PyArg_ParseTuple(args, "l", &value)) {
             // convert into an int using PyArg_Parse(...)
@@ -1116,15 +1116,17 @@ static PyObject *Element_set(Element *self, PyObject *args)
             debug("Setting element to '%li'\n", value);
             if(value == 0)
                     element_set0(self->e);
+
             else if(value == 1)
                     element_set1(self->e);
             else {
                     debug("Value '%i'\n", (signed int) value);
+
                     element_set_si(self->e, (signed int) value);
             }
     }
     else if(PyArg_ParseTuple(args, "O", &object)){
-            element_set(self->e, object->e);
+			element_set(self->e, object->e);
     }
     else {
     	// PyArg_ParseTuple already set the due error type and string
@@ -1133,7 +1135,6 @@ static PyObject *Element_set(Element *self, PyObject *args)
 
     return Py_BuildValue("i", errcode);
 }
-
 static PyObject  *Element_initPP(Element *self, PyObject *args)
 {
 	if(self->elem_initPP == TRUE){
@@ -1479,7 +1480,35 @@ cleanup:
 	if(tmpObj != NULL) Py_XDECREF(tmpObj);
 	EXIT_IF(TRUE, tmp);
 }
+//字符创转element对象
+static PyObject* Element_fromstr(Element* self, PyObject * args)
+{
+	Element *newObject = NULL;
+	Pairing *group = NULL;
+	PyObject *objList = NULL, *tmpObject = NULL, *tmpObj = NULL;
+	int result, i;
+	GroupType type = ZR;
+	int base;
+	char *tmp = malloc(MAX_LEN*sizeof(char));
 
+	// make sure args have the right type -- check that args contain a "string" and "string"
+	if(!PyArg_ParseTuple(args, "OOi|i", &group, &objList, &base, &type)) {
+		EXIT_IF(TRUE, "invalid object types");
+	}
+
+	VERIFY_GROUP(group);
+	if(PyBytes_CharmCheck(objList)){
+		PyBytes_ToString2(tmp, objList, tmpObj);
+		printf("%d\n",(int)sizeof(tmp));
+		printf("%d\n",base);
+
+		int n = (int)sizeof(tmp);
+		newObject = createNewElement(type, group);
+		element_set_str(newObject->e,(const char*)tmp, base);
+	}
+	if(tmpObj != NULL) Py_XDECREF(tmpObj);
+	return (PyObject *) newObject;
+}
 static PyObject *Element_equals(PyObject *lhs, PyObject *rhs, int opid) {
 	Element *self = NULL, *other = NULL;
 	int result = -1; // , value;
@@ -2068,7 +2097,7 @@ PyMemberDef Element_members[] = {
 
 PyMethodDef Element_methods[] = {
   {"initPP", (PyCFunction)Element_initPP, METH_NOARGS, "Initialize the pre-processing field of element."},
-  {"set", (PyCFunction)Element_set, METH_VARARGS, "Set an element to a fixed value."},
+  {"set", (PyCFunction)Element_set, METH_VARARGS, "Set an element to a fixed value."},  
   {NULL}  /* Sentinel */
 };
 
@@ -2082,6 +2111,7 @@ PyMethodDef pairing_methods[] = {
 	{"deserialize", (PyCFunction)Deserialize_cmp, METH_VARARGS, "De-serialize an bytes object into an element object"},
 	{"ismember", (PyCFunction) Group_Check, METH_VARARGS, "Group membership test for element objects."},
 	{"order", (PyCFunction) Get_Order, METH_VARARGS, "Get the group order for a particular field."},
+	{"fromStr", (PyCFunction) Element_fromstr, METH_VARARGS, "Get the group order for a particular field."},
 #ifdef BENCHMARK_ENABLED
 	{"InitBenchmark", (PyCFunction)InitBenchmark, METH_VARARGS, "Initialize a benchmark object"},
 	{"StartBenchmark", (PyCFunction)StartBenchmark, METH_VARARGS, "Start a new benchmark with some options"},

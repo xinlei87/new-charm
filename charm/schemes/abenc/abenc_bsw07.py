@@ -108,7 +108,7 @@ class CPabe_BSW07(ABEnc):
 
 
 def main():   
-    groupObj = PairingGroup('SS512')
+    groupObj = PairingGroup('MNT159')
 
     cpabe = CPabe_BSW07(groupObj)
     attrs = ['ONE', 'TWO', 'THREE']

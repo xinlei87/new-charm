@@ -530,7 +530,6 @@ Integer *createNewInteger() {
 static PyObject *Integer_set(Integer *self, PyObject *args) {
 	PyObject *obj = NULL;
 	Integer *intObj = NULL;
-
 	if (PyArg_ParseTuple(args, "O", &obj)) {
 
 		if (PyInteger_Check(obj)) {

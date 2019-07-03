@@ -1,6 +1,6 @@
 try:
   from charm.toolbox.pairingcurves import params as param_info
-  from charm.core.math.pairing import pairing,pc_element,ZR,G1,G2,GT,init,pair,hashPair,H,random,serialize,deserialize,ismember,order
+  from charm.core.math.pairing import pairing,pc_element,ZR,G1,G2,GT,init,pair,hashPair,H,fromStr,random,serialize,deserialize,ismember,order
   import charm.core.math.pairing as pg
   from charm.config import libs,pairing_lib
 except Exception as err:
@@ -96,7 +96,9 @@ class PairingGroup():
     def hash(self, args, type=ZR):
         """hashes objects into ZR, G1 or G2 depending on the pairing curve"""
         return H(self.Pairing, args, type)
-    
+    def fromstr(self, strobj, base,type=ZR):
+        return fromStr(self.Pairing, strobj, base, type)
+
     def serialize(self, obj, compression=True):
         """Serialize a pairing object into bytes.
 
@@ -173,7 +175,7 @@ class PairingGroup():
         """retrieves benchmark results for any of these options: 
         RealTime, CpuTime, Mul, Div, Add, Sub, Exp, Pair, Granular"""
         return pg.GetBenchmark(self.Pairing, option)
-
+    
 
 def extract_key(g):
     """

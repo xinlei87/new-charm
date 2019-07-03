@@ -53,7 +53,7 @@ class ECDSA(PKSig):
         
     def verify(self, pk, sig, M):
         w = sig['s'] ** -1
-        u1 = group.hash(M) * w
+        u1 =  group.hash(M)* w
         u2 = sig['r'] * w
         v = (pk['g'] ** u1) * (pk['y'] ** u2)
     

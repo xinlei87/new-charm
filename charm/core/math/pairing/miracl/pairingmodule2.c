@@ -992,7 +992,6 @@ static PyObject *Element_set(Element *self, PyObject *args)
 
     return Py_BuildValue("i", errcode);
 }
-
 static PyObject *Element_setxy(Element *self, PyObject *args)
 {
     Element *object1 = NULL, *object2 = NULL;
@@ -1938,7 +1937,7 @@ PyMethodDef Element_methods[] = {
 	{"initPP", (PyCFunction)Element_initPP, METH_NOARGS, "Initialize the pre-processing field of element."},
 	{"set", (PyCFunction)Element_set, METH_VARARGS, "Set an element to a fixed value."},
 	{"setPoint", (PyCFunction)Element_setxy, METH_VARARGS, "Set x and y coordinates of a G1 element object."},
-    {NULL}  /* Sentinel */
+	{NULL}  /* Sentinel */
 };
 
 PyMethodDef pairing_methods[] = {
@@ -1952,6 +1951,7 @@ PyMethodDef pairing_methods[] = {
 
 	{"pair", (PyCFunction)Apply_pairing, METH_VARARGS, "Apply pairing between an element of G1_t and G2 and returns an element mapped to GT"},
 	{"hashPair", (PyCFunction)sha2_hash, METH_VARARGS, "Compute a sha1 hash of an element type"},
+	{"set"}
 //	{"SymEnc", (PyCFunction) AES_Encrypt, METH_VARARGS, "AES encryption args: key (bytes or str), message (str)"},
 //	{"SymDec", (PyCFunction) AES_Decrypt, METH_VARARGS, "AES decryption args: key (bytes or str), ciphertext (str)"},
 #ifdef BENCHMARK_ENABLED
