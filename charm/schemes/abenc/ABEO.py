@@ -265,6 +265,6 @@ def generateSig(m):
     signature = ecdsa.sign(public_key,secret_key,m)
     return signature
 if __name__ == "__main__":
-    debug = True
+    debug = False
     main()
    

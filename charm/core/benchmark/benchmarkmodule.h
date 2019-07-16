@@ -22,7 +22,7 @@ extern "C" {
 #ifdef DEBUG
 #define debug(...)	printf("DEBUG: "__VA_ARGS__)
 #else
-#define debug(...)  printf("DEBUG: "__VA_ARGS__)
+#define debug(...) 
 #endif
 
 #if PY_MAJOR_VERSION >= 3

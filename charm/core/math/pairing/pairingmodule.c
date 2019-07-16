@@ -1359,14 +1359,19 @@ static PyObject *Element_hash(Element *self, PyObject *args) {
 			// create an element of Zr
 			// hash bytes using SHA1
 			int str_length = (int) strlen(str);
-			result = hash_to_bytes((uint8_t *) str, str_length, hash_buf, hash_len, HASH_FUNCTION_STR_TO_Zr_CRH);
-			// extract element in hash
-			if(!result) { 
-				tmp = "could not hash to bytes.";
-				goto cleanup; 
-			}
 			newObject = createNewElement(ZR, group);
-			element_from_hash(newObject->e, hash_buf, hash_len);
+			element_from_hash(newObject->e, (const char *)str, str_length);
+			// result = hash_to_bytes((uint8_t *) str, str_length, hash_buf, hash_len, HASH_FUNCTION_STR_TO_Zr_CRH);
+			// // extract element in hash
+			// if(!result) { 
+			// 	tmp = "could not hash to bytes.";
+			// 	goto cleanup; 
+			// }
+			// newObject = createNewElement(ZR, group);
+			// printf("this is element_hash\n")
+			// printf(hash_buf)
+			// debug(hash_len)
+			// element_from_hash(newObject->e, hash_buf, hash_len);
 		}
 		else if(type == G1 || type == G2) { // depending on the curve hashing to G2 might not be supported
 		    // element to G1	
@@ -1499,14 +1504,39 @@ static PyObject* Element_fromstr(Element* self, PyObject * args)
 	VERIFY_GROUP(group);
 	if(PyBytes_CharmCheck(objList)){
 		PyBytes_ToString2(tmp, objList, tmpObj);
-		printf("%d\n",(int)sizeof(tmp));
-		printf("%d\n",base);
 
 		int n = (int)sizeof(tmp);
 		newObject = createNewElement(type, group);
 		element_set_str(newObject->e,(const char*)tmp, base);
 	}
 	if(tmpObj != NULL) Py_XDECREF(tmpObj);
+	return (PyObject *) newObject;
+}
+static PyObject* Element_gen1_0(Element* self, PyObject * args)
+{
+	Element *newObject = NULL;
+	Pairing *group = NULL;
+	PyObject *objList = NULL, *tmpObject = NULL, *tmpObj = NULL;
+	int result, i;
+	GroupType type = ZR;
+	int value;
+	// make sure args have the right type -- check that args contain a "string" and "string"
+	if(!PyArg_ParseTuple(args, "Oi", &group, &value)) {
+		EXIT_IF(TRUE, "invalid object types");
+	}
+	VERIFY_GROUP(group);
+	newObject = createNewElement(type, group);
+	if(value == 0){
+		element_set0(newObject->e);
+	}
+	else if(value == 1){
+
+		element_set1(newObject->e);
+	}
+	else {
+		element_set_si(newObject->e,value);
+	}
+
 	return (PyObject *) newObject;
 }
 static PyObject *Element_equals(PyObject *lhs, PyObject *rhs, int opid) {
@@ -2112,6 +2142,8 @@ PyMethodDef pairing_methods[] = {
 	{"ismember", (PyCFunction) Group_Check, METH_VARARGS, "Group membership test for element objects."},
 	{"order", (PyCFunction) Get_Order, METH_VARARGS, "Get the group order for a particular field."},
 	{"fromStr", (PyCFunction) Element_fromstr, METH_VARARGS, "Get the group order for a particular field."},
+	{"Gen1_0", (PyCFunction) Element_gen1_0, METH_VARARGS, "Get the group order for a particular field."},
+
 #ifdef BENCHMARK_ENABLED
 	{"InitBenchmark", (PyCFunction)InitBenchmark, METH_VARARGS, "Initialize a benchmark object"},
 	{"StartBenchmark", (PyCFunction)StartBenchmark, METH_VARARGS, "Start a new benchmark with some options"},

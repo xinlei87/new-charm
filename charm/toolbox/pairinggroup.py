@@ -1,6 +1,6 @@
 try:
   from charm.toolbox.pairingcurves import params as param_info
-  from charm.core.math.pairing import pairing,pc_element,ZR,G1,G2,GT,init,pair,hashPair,H,fromStr,random,serialize,deserialize,ismember,order
+  from charm.core.math.pairing import pairing,pc_element,ZR,G1,G2,GT,init,pair,hashPair,H,fromStr,Gen1_0,random,serialize,deserialize,ismember,order
   import charm.core.math.pairing as pg
   from charm.config import libs,pairing_lib
 except Exception as err:
@@ -99,6 +99,8 @@ class PairingGroup():
     def fromstr(self, strobj, base,type=ZR):
         return fromStr(self.Pairing, strobj, base, type)
 
+    def gen1_0(self, intobj):
+            return Gen1_0(self.Pairing, intobj)
     def serialize(self, obj, compression=True):
         """Serialize a pairing object into bytes.
 
